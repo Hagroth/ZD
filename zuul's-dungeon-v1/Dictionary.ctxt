@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=
+comment0.target=java.util.TreeSet\ getSalutations()
+comment0.text=\r\n\ Return\ all\ words\ in\ the\ salutations\ \r\n\ word\ group.\r\n\ @return\ The\ words\ in\ the\ salutations\r\n\ word\ group.\r\n
+comment1.params=
+comment1.target=java.util.TreeSet\ getAll()
+comment1.text=\r\n\ Return\ all\ valid\ words.\r\n\ @return\ All\ valid\ words.\r\n
+numComments=2

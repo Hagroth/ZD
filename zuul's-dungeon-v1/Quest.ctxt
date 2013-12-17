@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=name
+comment0.target=Quest(java.lang.String)
+comment0.text=\r\n\ Create\ a\ quest\ with\ name\ "name".\r\n\ @param\ name\ Name\ of\ the\ quest\ (only\ for\ internal\ purposes).\r\n
+comment1.params=
+comment1.target=void\ addPart()
+comment1.text=\r\n\ Adds\ a\ part\ to\ the\ quest.\r\n
+comment2.params=number
+comment2.target=boolean\ getPart(int)
+comment2.text=\r\n\ Return\ the\ status\ of\ the\ part.\r\n\ @param\ number\ The\ number\ of\ the\ part\ to\ return\ (index\ 0\ for\ total\ quest).\r\n\ @return\ The\ status\ of\ the\ part\ (finished\ or\ not).\r\n
+comment3.params=number
+comment3.target=void\ completedPart(int)
+comment3.text=\r\n\ Set\ the\ part\ with\ number\ "number"\ to\ completed.\r\n\ @param\ number\ The\ number\ of\ the\ part.\r\n
+numComments=4

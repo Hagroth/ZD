@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.params=direction\ neighbour\ unlocked\ key
+comment0.target=Exit(java.lang.String,\ Room,\ boolean,\ Item)
+comment0.text=\r\n\ Create\ an\ exit\ with\ direction\ "direction"\ and\r\n\ locked\ status\ "unlocked".\ "direction"\ is\ only\ for\r\n\ display\ purposes\ and\ thus\ works\ as\ a\ name.\r\n\ @param\ direction\ The\ direction\ (name).\r\n\ @param\ neighbour\ The\ room\ the\ exit\ leads\ to.\r\n\ @param\ unlocked\ The\ exit's\ status.\r\n\ @param\ key\ The\ key\ that\ fits\ the\ lock\ (null\ if\ there's\r\n\ no\ lock).\r\n
+comment1.params=
+comment1.target=java.lang.String\ getDirection()
+comment1.text=\r\n\ Return\ the\ direction\ (used\ as\ a\ name)\ of\ the\ exit.\r\n\ @return\ The\ direction/name\ of\ the\ exit.\r\n
+comment2.params=
+comment2.target=Room\ getNeighbour()
+comment2.text=\r\n\ Return\ the\ neighbour\ -\ the\ room\ the\ exit\ leads\ to.\r\n\ @return\ The\ neighbour\ -\ the\ room\ the\ exit\ leads\ to.\r\n
+comment3.params=
+comment3.target=void\ lock()
+comment3.text=\r\n\ Lock\ the\ door.\r\n
+comment4.params=
+comment4.target=void\ unlock()
+comment4.text=\r\n\ Unlock\ the\ door.\r\n
+comment5.params=
+comment5.target=Item\ getKey()
+comment5.text=\r\n\ Return\ key\ associated\ with\ exit.\r\n\ @return\ Key\ associated\ with\ exit.\r\n
+comment6.params=
+comment6.target=boolean\ getUnlocked()
+comment6.text=\r\n\ Return\ the\ status\ of\ the\ exit\ (unlocked\r\n\ or\ locked).\r\n\ @return\ True\ if\ exit\ is\ unlocked.\r\n
+numComments=7

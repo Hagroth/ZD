@@ -35,6 +35,8 @@ public class Character
     private TreeMap<String, String> dialogue;
     // determines whether the character may move around.
     private boolean moveable;
+    // sets the character's hostile status
+    private boolean hostile;
 
     /**
      * Create a character with defined name, capacity,
@@ -46,13 +48,15 @@ public class Character
      * @param damage The character's initial damage.
      * @param health The character's initial health.
      * @param moveable The character's moveable status.
+     * @param hostile The charater's hostile status.
      */
-    public Character(String name, double capacity, int damage, int health, boolean moveable) {
+    public Character(String name, double capacity, int damage, int health, boolean moveable, boolean hostile) {
         this.name = name;
         this.capacity = capacity;
         this.damage = damage;
         this.health = health;
         this.moveable = moveable;
+        this.hostile = hostile;
         locationHistory = new Stack<Room>();
         inventory = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         dialogue = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -167,6 +171,14 @@ public class Character
     public int getDamage(){
         return damage;
     }
+   
+    /**
+     * Set the damage of the character.
+     * @param damage The damage of the character.
+     */
+    public void setDamage(int damage){
+        this.damage = damage;
+    }
     
     /**
      * Return the health of the character.
@@ -174,6 +186,14 @@ public class Character
      */
     public double getHealth(){
         return health;
+    }
+    
+    /**
+     * Set the health of the character.
+     * @param health The health of the character.
+     */
+    public void setHealth(int health){
+        this.health = health;
     }
     
     /**
@@ -190,6 +210,32 @@ public class Character
      */
     public boolean getMoveable() {
         return moveable;
+    }
+    
+    /**
+     * Return the hostile status.
+     * @return The hostile status.
+     */
+    public boolean getHostile() {
+        return hostile;
+    }
+    
+    /**
+     * Set the hostile status.
+     * @param hostile The hostile status.
+     */
+    public void setHostile(boolean hostile) {
+        this.hostile = hostile;
+        
+        // special cases
+        if (name.equals("Hrangst Jaltibrond")) {
+            removeDialogue("salutations");
+            addDialogue("salutations", "You have to die!");
+            removeDialogue("greetingsNear");
+            addDialogue("greetingsNear", "You hear the old man moving around in the adjoining room, but with more decisiveness and speed than before. You sense that something is wrong.");
+            removeDialogue("greetingsSame");
+            addDialogue("greetingsSame", "The old man charges at you with a dagger! His eyes are black and he seems to have cut his own wrists before coming at you.");
+        }
     }
     
     /**

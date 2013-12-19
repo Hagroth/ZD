@@ -17,10 +17,10 @@ public class CommandWords
     {
         validCommands.put("go", "[direction]; back");
         validCommands.put("look", "(None); [item name]; inventory");
-        validCommands.put("use", "[item name]");
+        validCommands.put("use", "[item name] - to fight, enter: 'use [weapon name]");
         validCommands.put("take", "[item name]");
         validCommands.put("drop", "[item name]");
-        validCommands.put("say", "[phrase] - e.g.: 'hi'; 'how's it going'.");
+        validCommands.put("say", "[phrase] - e.g.: 'hi'; 'how's it going'. (Only salutations have been implemented.)");
         validCommands.put("give", "[character name] [item name]");
         validCommands.put("help", "(None)");
         validCommands.put("quit", "(None)");

@@ -6,21 +6,19 @@ import java.util.ArrayList;
 
 /**
  *  This class is the main class of the "Zuul's Dungeon" application. 
- *  "Zuul's Dungeon" is a very simple, text based adventure game. As of
- *  now, there is no way to complete it or any goals, and only one quest
- *  which is very simple and short.
+ *  "Zuul's Dungeon" is a very simple, text based adventure game.
  * 
  *  To play this game, create an instance of this class and call the "play"
  *  method.
  * 
- *  This main class creates and initialises all the others It also evaluates and
+ *  This main class creates and initialises all the others. It also evaluates and
  *  executes the commands that the parser returns.
  * 
  * @author  Joel Hagrot
  * @version 2013.12.15
  */
 
-public class Game 
+public class Game
 {
     // a parser for processing user input.
     private Parser parser;
@@ -39,6 +37,8 @@ public class Game
     private Character player;
     // the random instance.
     private Random random;
+    // a variable for the countdown timer.
+    private int time;
     
     /**
      * Main method for running the game as a jar file.
@@ -66,6 +66,9 @@ public class Game
      * Initialize the game.
      */
     private void initializeGame() {
+        // initialize timer
+        time = 15;
+        
         // initialize quests
         initializeQuest("quest1", 2);
         
@@ -100,7 +103,7 @@ public class Game
         rooms.put(hallwayB1.getName(), hallwayB1);
         
         // create characters.
-        initializeCharacter("Hrangst Jaltibrond", 50, 30, 200, false, cell3);
+        initializeCharacter("Hrangst Jaltibrond", 50, 30, 100, false, false, cell3);
         
         // create dialogue for the characters.
         characters.get("Hrangst Jaltibrond").addDialogue("pardon", "Pardon?");
@@ -114,7 +117,9 @@ public class Game
         initializeItem("Note from kidnappers", "A rather neatly put together note, apparently written by whoever kidnapped you.", 0.1, "none", 0, true, "miscellaneous", "It reads:\n\"" + player.getName() + ",\nYour plans are over. I know of your schemes, your plot to overthrow the order using Dagon's heart.\nYou will not succeed. I am a mage of great power, indeed I once trapped the emperor himself and have now returned\nmore powerful than ever. You are trapped in my dimension just like my father, Jagar Tharn, trapped the emperor all those centuries ago.\nBut I am a person of sports, and will allow you a chance to redeem yourself. Of course your plot is forever lost, but\nyou may yet survive and leave this place. Prove your worthiness in my dungeon!\nZuul Tharn\"", false, "cell1");
         initializeItem("Crude key", "A very crude looking key made from dark and rusty iron.", 0.05, "none", 0, true, "key", "You pull the key out of your bag, it feels rather fragile and light in your palm.", true, "cell2");
         initializeItem("Sturdy key", "A sturdy key made from cast iron.", 0.1, "none", 0, true, "key", "You pull the key out of your bag, it feels rather cold and heavy.", true, "Hrangst Jaltibrond");
-        initializeItem("Rusty sword", "A rusty old sword, dull to the point any death caused by it must be extremely painful.", 5, "Damage", 30, true, "weapon", "You swing the sword.", false, "hallwayB1");
+        initializeItem("Rusty sword", "A rusty old sword, dull to the point any death caused by it must be extremely painful.", 5, "Damage", 50, true, "weapon", "You swing the sword.", false, "hallwayB1");
+        initializeItem("Fists", "Your fists. They may be used as a last route while fighting.", 0, "Damage", 5, true, "weapon", "You swing a powerful blow using your fists.", true, "");
+        
         
         // initialize room exits.
         // intro
@@ -147,7 +152,8 @@ public class Game
         stairsAB.setExit("up", hallwayB1, true, null);
         hallwayB1.setExit("down", stairsAB, true, null);
         
-        player.addLocationHistory(bedroom);  // start game in bedroom
+        player.addLocationHistory(cell1);  // start game in bedroom
+        player.addItem(items.get("Fists"));
     }
     
     /**
@@ -194,7 +200,7 @@ public class Game
         // initialize player and game.
         System.out.println("What is your name?");
         String name = parser.getInput();
-        player = new Character(name, 50, 10, 100, true);
+        player = new Character(name, 50, 10, 100, true, false);
         initializeGame();
         
         printWelcome();
@@ -205,16 +211,42 @@ public class Game
                            "of unease, you can't close your eyes and go to sleep again.\n");
                            
         printLocationInfo();
+        
+        
+        processCommand(new Command("take", "bread loaf"));
+        processCommand(new Command("go", "east"));
+        processCommand(new Command("go", "north"));
+        processCommand(new Command("take", "crude key"));
+        processCommand(new Command("go", "south"));
+        processCommand(new Command("use", "crude key"));
+        processCommand(new Command("go", "south"));
+        processCommand(new Command("go", "east"));
+        player.addItem(items.get("Rusty sword"));
+        /*processCommand(new Command("give", "hrangst jaltibrond bread loaf"));
+        processCommand(new Command("use", "crude key"));
+        processCommand(new Command("use", "sturdy key"));
+        processCommand(new Command("go", "east"));
+        processCommand(new Command("go", "up"));
+        processCommand(new Command("go", "up"));
+        processCommand(new Command("take", "rusty sword"));
+        processCommand(new Command("go", "down"));
+        processCommand(new Command("go", "down"));
+        processCommand(new Command("go", "up"));
+        processCommand(new Command("go", "up"));
+        processCommand(new Command("go", "down"));
+        processCommand(new Command("go", "down"));
+        processCommand(new Command("go", "west"));
+        processCommand(new Command("go", "west"));
+        processCommand(new Command("go", "east"));*/
+
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
                 
-        boolean finished = false;
-        while (! finished) {
+        while (true) {
             Command command = parser.getCommand();
-            finished = processCommand(command);
+            processCommand(command);
         }
-        System.out.println("Thank you for playing. Good bye.");
     }
 
     /**
@@ -239,8 +271,8 @@ public class Game
      * @param moveable The character's moveable status.
      * @param room The character's initial room.
      */
-    private void initializeCharacter(String name, double capacity, int damage, int health, boolean moveable, Room room) {
-        Character character = new Character(name, capacity, damage, health, moveable);
+    private void initializeCharacter(String name, double capacity, int damage, int health, boolean moveable, boolean hostile, Room room) {
+        Character character = new Character(name, capacity, damage, health, moveable, hostile);
         characters.put(name, character);
         character.addLocationHistory(room);
     }
@@ -268,17 +300,19 @@ public class Game
     /**
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
-     * @return true If the command ends the game, false otherwise.
      */
-    private boolean processCommand(Command command) {
-        boolean wantToQuit = false;
-
+    private void processCommand(Command command) {
         if(command.isUnknown()) {
             System.out.println("This command is not valid. Type 'help' for a list of valid commands.");
-            return false;
+            return;
         }
         
-        moveCharacters();
+        if (quests.get("quest1").getPart(0) && time != 0) {
+            time--;
+            if (time == 0) {
+                characters.get("Hrangst Jaltibrond").setHostile(true);
+            }
+        }
         
         String commandWord = command.getCommandWord();
         if (commandWord.equals("help")) {
@@ -298,24 +332,124 @@ public class Game
         } else if (commandWord.equals("drop")) {
             drop(command);
         } else if (commandWord.equals("quit")) {
-            wantToQuit = quit(command);
+            quit(command);
         }
-
-        return wantToQuit;
+        
+        lookForNPCAction();
+        
+        System.out.println();
     }
     
     /**
-     * Loops through all characters and, based upon randomness, 
-     * moves the character into an adjoining room if the character
+     * If an NPC is nearby, let it act. Fight
+     * if hostile and in the same room; Move 
+     * if not in the same room.
+     */
+    private void lookForNPCAction() {
+        Character nearbyCharacter = checkWhoIsNear();
+        if (nearbyCharacter == null) {
+            System.out.println();
+            return;
+        }
+        if (nearbyCharacter.getHostile() && nearbyCharacter.getLocation() == player.getLocation()) {
+            // allows the character to both move and fight at the same time to balance the game.
+            /*if (nearbyCharacter.getLocation() != player.getLocation()) {
+                moveCharacters();
+            }*/
+            fight(player, nearbyCharacter);
+        } else {
+            moveCharacters();
+        }
+    }
+    
+    /**
+     * Simulate a fight between two characters.
+     * @param defender The defending character.
+     * @param attacker The attacking character.
+     */
+    private void fight(Character defender, Character attacker) {
+        String defenderName = defender.getName();
+        String attackerName = attacker.getName();
+        if (player == defender) {
+            defenderName = "You";
+        } else if (player == attacker) {
+            attackerName = "You";
+        }
+        System.out.println(attackerName + " unleashed an attack!");
+        if (random.nextInt(2) == 1) {
+            int damage = (int) Math.round(attacker.getDamage() / 2 + random.nextInt(attacker.getDamage() / 2));
+            defender.setHealth((int) defender.getHealth() - damage);
+            System.out.println(attackerName + " hit! The hit causes a loss of " + damage + " hit points!");
+            System.out.println(defenderName + ": " + defender.getHealth() + " hit points left!");
+            if (defender.getHealth() <= 0) {
+                System.out.println(defenderName + " fell to the ground!");
+                isDead(defender);
+            }
+        } else {
+            System.out.println(attackerName + " missed!");
+        }
+    }
+    
+    /**
+     * Loop through all characters and, based upon randomness, 
+     * move the character into an adjoining room if the character
      * doesn't have to remain in its current room due to quests.
+     * If the character is hostile, follow the player by going
+     * to the player's location if the player is in an adjoining
+     * room and stay if the player's in the same room. If the 
+     * player isn't found, go randomly as usual.
      */
     public void moveCharacters() {
         for (Character character : characters.values()) {
-            if (character.getMoveable() && random.nextInt(2) == 1) {
-                ArrayList<Room> neighboursList = character.getLocation().getNeighbours();
-                Room randomNeighbour = neighboursList.get(random.nextInt(neighboursList.size()));
-                character.addLocationHistory(randomNeighbour);
+            ArrayList<Room> neighboursList = character.getLocation().getNeighbours();
+            boolean found = false;
+            // if character's hostile, stay if player's in the same room. If not, sense if player's in a nearby room and go there if found. If not, go randomly as usual.
+            if (character.getHostile()) {
+                if (character.getLocation() == player.getLocation()) {
+                    return;
+                }
+                for (Room neighbour : neighboursList) {
+                    if (player.getLocation() == neighbour) {
+                        Room nextRoom = neighbour;
+                        character.addLocationHistory(nextRoom);
+                        found = true;
+                    }
+                }
             }
+            // randomly go to a nearby room.
+            if (!found && character.getMoveable() && random.nextInt(2) == 1) {
+                Room nextRoom = neighboursList.get(random.nextInt(neighboursList.size()));
+                character.addLocationHistory(nextRoom);
+            }
+        }
+    }
+    
+    /**
+     * Special story progressing cases when a character dies.
+     * @param character The character who's died.
+     */
+    private void isDead(Character character) {
+        if (player == character) {
+            System.out.println("Zuul Tharn appears from nowhere and walks slowly towards you as Hrangst Jaltibrond cuts his own throat and falls to the ground on the other side of the room.");
+            System.out.println("Zuul Tharn: How disappointing. I had expected more of you, a Nord diplomat with the ambition to overthrow my power. You prove far too trusting in others... I shall drop your body outside of your family's house, I am a gentleman after all. Rest in peace.");
+            System.out.println("Zuul Tharn takes out his staff, aims it at you and you feel the world fading into nothingness.\n");
+            System.out.println("You didn't survive Zuul Tharn's dungeon, and never again will you see Nirn. But fret not, you may yet feast in Sovngarde!\n\n");
+            System.out.println("GAME OVER\n");
+            quit(new Command("quit", null));
+        }
+        if (characters.get("Hrangst Jaltibrond") == character) {
+            System.out.println("He lies on his back, coughing blood. His eyes turn back to normal as he tries to speak.");
+            System.out.println(character.getName() + ": I was controlled by some force unknown... please, understand this was not my own will. I was kidnapped from nowhere by Zuul Tharn, probably like yourself. I have no family, but could you provide a burial for me in Winterhold, the city of my ancestors?");
+            System.out.println("As " + character.getName() + "'s life fades away, Zuul Tharn appears from nowhere.");
+            System.out.println("Zuul Tharn: Ach, you are cunning and brave, " +  player.getName() + "! As I said, I am a man of sports and I shall grant you a way back to Nirn, just head to the door on the second floor. I hope you enjoyed your stay in this plane of Oblivion. I will also grant the old man's wish and teleport his body to the forests outside Skingrad where you'll spawn. Your plans to overthrow my power are of course ripped to pieces now, but at least you may yet live. Stay out of my way from now on and may we never cross paths again. Your power is futile next to mine. Bye, " + player.getName() + ".");
+            if (!quests.get("quest1").getPart(0)) {
+                System.out.println("Zuul Tharn vanished just as he had appeared, so did Hrangst's body. You are alone now in his dungeon and may leave according to Zuul. Hopefully he keeps his word.\nIt seems Hrangst's body left a key.");
+                player.getLocation().addItem(items.get("Sturdy key"));
+            } else {
+                System.out.println("Zuul Tharn vanished just as he had appeared, so did Hrangst's body. You are alone now in his dungeon and may leave according to Zuul. Hopefully he keeps his word.");
+            }
+            characters.remove("Hrangst Jaltibrond");
+            rooms.get("hallwayB1").setExit("north", null, true, null);
         }
     }
 
@@ -325,7 +459,9 @@ public class Game
      * Print out some help information.
      */
     private void printHelp() {
-        System.out.println("Zuul's Dungeon features a few possible actions: You can go between rooms; Look around the room to get the description again, look at items to get their properties (they must be either in the room or in your inventory) or look at your inventory to see what you're carrying around; Use items to e.g. unlock doors or read their contents; Take items to pick them up and put them in your inventory; Drop items to drop them on the floor; Say e.g. 'hi' to talk to characters; Give items to other characters.\nThere is one short quest at the moment and a few items and rooms, but no actual end as of now. The one character in the game will move around randomly from room to room once the quest is over. Characters recognize when you are nearby and will greet you.");
+        System.out.println("Zuul's Dungeon features a few possible actions: You can go between rooms; Look around the room to get the description again, look at items to get their properties (they must be either in the room or in your inventory) or look at your inventory to see what you're carrying around; Use items to e.g. unlock doors, read the item's contents or engage in a fight; Take items to pick them up and put them in your inventory; Drop items to drop them on the floor; Say e.g. 'hi' to talk to characters; Give items to other characters." + 
+                            "\nThe game features a short story line and a few items and rooms. Characters move around randomly from room to room when they aren't obliged to stay still due to e.g. quests. Characters recognize when you are nearby and will greet you. If a character is hostile, they can sense if you're in a nearby room and will follow you and hit you if you are in the same room." +
+                            "\nFighting is based on luck and what weapon is being used. There's a 50/50 chance to hit successfully, and the magnitude of the hit is determined by luck and the used weapon's damage ([1/2 damage] + [random number from 0 to 1/2 damage])");
         System.out.println("Your command words, with their arguments, are:");
         System.out.println(parser.showCommands());
     }
@@ -345,7 +481,7 @@ public class Game
         if (direction.equals("back")) {
             player.subtractLocationHistory();
             printLocationInfo();
-            lookForNPCAction();
+            lookForNPCMessage();
             return;
         }
         
@@ -359,6 +495,12 @@ public class Game
             player.addLocationHistory(rooms.get("cell1"));
             printLocationInfo();
             return;
+        }
+        if (player.getLocation().getName().equals("hallwayB1") && direction.equals("north")) {
+            System.out.println("\n\nThere's nothing but a black void on the other side of the door. You doubt the idea but since you have no other choice, you walk right out. It seems there is no gravity, neither any oxygen and you start to choke. But at the same time everything fades and soon you can't even feel your body.");
+            System.out.println("\nYou wake up as if from sleeping on a green meadow in a forest. The sky is clear and the sun shines strongly into your eyes. Looking to your left, Hrangst lies dead, pale as snow. It seems Zuul kept his word.");
+            System.out.println("\n\nCongratulations upon beating 'Zuul's Dungeon'!\n");
+            quit(new Command("quit", null));
         }
         
         // Regular operation.
@@ -376,13 +518,13 @@ public class Game
         }
         player.addLocationHistory(nextRoom);
         printLocationInfo();
-        lookForNPCAction();
+        lookForNPCMessage();
     }
     
     /**
-     * If an NPC is nearby, let it interact.
+     * If an NPC is nearby, display greeting/message.
      */
-    private void lookForNPCAction() {
+    private void lookForNPCMessage() {
         Character nearbyCharacter = checkWhoIsNear();
         if (nearbyCharacter == null) {
             System.out.println();
@@ -467,6 +609,7 @@ public class Game
                 System.out.println(receiverName + ": Thank you, I am absolutely starving. Could you please get me out of here?\n");
                 receiver.addDialogue("salutations", "Hello, friend. Could you please get me out of here?");
             } else {
+                quests.get("quest1").completedPart(0);
                 System.out.println(receiverName + ": Thank you so much for all your help, kind soul. I won't bother you anymore. Here, take this key so you may continue your journey. I wish you the best of fortune. Now, I must go.\nThe old man didn't smile, but as he walked away, you could see the gratefulness in his eyes. You wonder how such a scrawny figure might fare in such a place, but before you had a time to reply he was gone.\n");
                 receiver.removeItem(items.get("sturdy key"));
                 player.addItem(items.get("sturdy key"));
@@ -619,11 +762,19 @@ public class Game
             return;
         }
         if (item.getType().equals("weapon")) {
-            // future feature.
+            Character nearbyCharacter = checkWhoIsNear();
+            if (nearbyCharacter == null || nearbyCharacter.getLocation() != player.getLocation()) {
+                System.out.println("It's a shame there's nobody here to taste your fury!");
+                return;
+            }
+            nearbyCharacter.setHostile(true);
+            player.setDamage(player.getDamage() + item.getParameter());
+            fight(nearbyCharacter, player);
+            player.setDamage(player.getDamage() - item.getParameter());
+            System.out.println();
             return;
         }
         if (item.getType().equals("advantage")) {
-            // future feature.
             if (item.getType().equals("quest")) {
                 System.out.println("You figure you might want to hold on to this.\n");
             }
@@ -636,6 +787,10 @@ public class Game
                 System.out.println("After checking every door in this room, you realize, with disappointment, that " + item.getName() + " won't fit in any of them.\n");
                 return;
             }
+            if (exit.getUnlocked()) {
+                System.out.println(item.getName() + " seems to work in the door leading " + exit.getDirection() + " from here, but it's already open.\n");
+                return;
+            }
             System.out.println(item.getName() + " seems to work in the door leading " + exit.getDirection() + " from here! You unlocked the door.\n");
             exit.unlock();
             // Check whether the action is relevant to any quest.
@@ -645,6 +800,7 @@ public class Game
                     System.out.println("Hrangst Jaltibrond: Thank you so much. I am absolutely starving, could you please pass me some of that bread?\n");
                     characters.get("Hrangst Jaltibrond").addDialogue("salutations", "Hello, friend. I am starving, is there any chance you could pass me some of that bread?");
                 } else {
+                    quests.get("quest1").completedPart(0);
                     System.out.println("Hrangst Jaltibrond: Thank you so much for all your help, kind soul. I won't bother you anymore. Here, take this key so you may continue your journey. I wish you the best of fortune. Now, I must go.\nThe old man didn't smile, but as he walked away, you could see the gratefulness in his eyes. You wonder how such a scrawny figure might fare in such a place, but before you had a time to reply he was gone.\n");
                     characters.get("Hrangst Jaltibrond").removeItem(items.get("sturdy key"));
                     player.addItem(items.get("sturdy key"));
@@ -685,7 +841,8 @@ public class Game
             item = player.getItem(secondWord);
         }
         if (item == null) {
-            System.out.println("There is no such item here.");
+            System.out.println("There is no such item here.\n");
+            return;
         }
         lookAtItem(item);
     }
@@ -709,13 +866,13 @@ public class Game
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private boolean quit(Command command) {
+    private void quit(Command command) {
         if(command.hasSecondWord()) {
             System.out.println("Quit what?");
-            return false;
         }
         else {
-            return true;  // signal that we want to quit
+            System.out.println("Thank you for playing 'Zuul's Dungeon'!");
+            System.exit(0);
         }
     }
 }

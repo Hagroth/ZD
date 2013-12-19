@@ -152,7 +152,7 @@ public class Game
         stairsAB.setExit("up", hallwayB1, true, null);
         hallwayB1.setExit("down", stairsAB, true, null);
         
-        player.addLocationHistory(cell1);  // start game in bedroom
+        player.addLocationHistory(bedroom);  // start game in bedroom
         player.addItem(items.get("Fists"));
     }
     
@@ -211,34 +211,6 @@ public class Game
                            "of unease, you can't close your eyes and go to sleep again.\n");
                            
         printLocationInfo();
-        
-        
-        processCommand(new Command("take", "bread loaf"));
-        processCommand(new Command("go", "east"));
-        processCommand(new Command("go", "north"));
-        processCommand(new Command("take", "crude key"));
-        processCommand(new Command("go", "south"));
-        processCommand(new Command("use", "crude key"));
-        processCommand(new Command("go", "south"));
-        processCommand(new Command("go", "east"));
-        player.addItem(items.get("Rusty sword"));
-        /*processCommand(new Command("give", "hrangst jaltibrond bread loaf"));
-        processCommand(new Command("use", "crude key"));
-        processCommand(new Command("use", "sturdy key"));
-        processCommand(new Command("go", "east"));
-        processCommand(new Command("go", "up"));
-        processCommand(new Command("go", "up"));
-        processCommand(new Command("take", "rusty sword"));
-        processCommand(new Command("go", "down"));
-        processCommand(new Command("go", "down"));
-        processCommand(new Command("go", "up"));
-        processCommand(new Command("go", "up"));
-        processCommand(new Command("go", "down"));
-        processCommand(new Command("go", "down"));
-        processCommand(new Command("go", "west"));
-        processCommand(new Command("go", "west"));
-        processCommand(new Command("go", "east"));*/
-
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.

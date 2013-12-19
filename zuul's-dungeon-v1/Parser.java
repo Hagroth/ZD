@@ -57,13 +57,12 @@ public class Parser
         }
 
         // Now check whether this word is known. If so, create a command
-        // with it. If not, create a "null" command (for unknown command).
-        if(commands.isCommand(word1)) {
-            return new Command(word1, word2);
+        // with it. If not, or if the player entered "" (null), create a
+        // "null" command (for unknown command).
+        if (word1 == null || !commands.isCommand(word1)) {
+            return new Command(null, word2);
         }
-        else {
-            return new Command(null, word2); 
-        }
+        return new Command(word1, word2);
     }
     
     public String showCommands() {
